@@ -1,0 +1,35 @@
+version: '3'
+
+name: api-compose
+
+services:
+  db:
+    image: mysql:8.0
+    container_name: db
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: mysql
+      MYSQL_DATABASE: mysql
+      MYSQL_USER: mysql
+      MYSQL_PASSWORD: mysql
+      MYSQL_ROOT_HOST: '%'
+    ports:
+      - '3307:3306'
+  cache:
+    image: redis:latest
+    container_name: cache
+    restart: unless-stopped
+    command: redis-server --loglevel warning
+    ports:
+      - '6380:6379'
+  api:
+    image: 'api:${VERSION:-latest}'
+    build:
+      context: ../
+      dockerfile: .docker/Dockerfile
+    ports:
+      - '${PORT:-4000}:${PORT:-4000}'
+    command: npm run start:prod
+    depends_on:
+      - db
+      - cache

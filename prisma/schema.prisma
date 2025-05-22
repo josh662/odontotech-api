@@ -1,0 +1,89 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "./generated/schema"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// # GESTÃO
+
+model User {
+  id            String     @id
+  name          String
+  email         String     @unique
+  password      String
+  createdAt     DateTime   @default(now())
+  updatedAt     DateTime   @default(now()) @updatedAt
+  UserRole      UserRole[]
+  Login         Login[]
+
+  @@map("users")
+}
+
+model Login {
+  id        String   @id
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onUpdate: Cascade, onDelete: Cascade)
+  ipAddress String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+
+  @@map("logins")
+}
+
+model Permission {
+  id                 String               @id
+  name               String?
+  description        String?
+  value              String               @unique
+  connectToInstances Boolean?
+  createdAt          DateTime             @default(now())
+  updatedAt          DateTime             @default(now()) @updatedAt
+
+  @@map("permissions")
+}
+
+model Role {
+  id                     String                   @id
+  name                   String
+  description            String?
+  selfManaged            Boolean? // Determina se a role só pode ser alterada pelo sistema
+  createdAt              DateTime                 @default(now())
+  updatedAt              DateTime                 @default(now()) @updatedAt
+  UserRole               UserRole[]
+
+  @@map("roles")
+}
+
+// Modelo que associa um usuário à uma role
+model UserRole {
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onUpdate: Cascade, onDelete: Cascade)
+  roleId    String
+  role      Role     @relation(fields: [roleId], references: [id], onUpdate: Cascade, onDelete: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+
+  @@id([userId, roleId])
+  @@map("userRoles")
+}
+
+// # CLIENTES
+
+// Modelo que representa um cliente
+model Client {
+  id         String     @unique
+  createdAt  DateTime   @default(now())
+  updatedAt  DateTime   @default(now()) @updatedAt
+
+  @@map("clients")
+}
