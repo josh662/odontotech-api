@@ -3,7 +3,11 @@ import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 
 import { PrismaService } from 'src/prisma';
-import { BaseHelperService, EventService, SearchService } from 'src/shared/services';
+import {
+  BaseHelperService,
+  EventService,
+  SearchService,
+} from 'src/shared/services';
 
 import { IDefault, origin, TSignUpRequest, TLoginRequest } from '../dto';
 import { createRecordId, TEnv, verifyPassword } from 'src/utils';
@@ -22,7 +26,7 @@ export class HelperService extends BaseHelperService {
     private readonly eventService: EventService,
     private readonly jwtService: JwtService,
   ) {
-    super(prisma, searchService)
+    super(prisma, searchService);
   }
   private origin = `${origin}:helper`;
   private logger = new Logger(this.origin);

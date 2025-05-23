@@ -71,8 +71,8 @@ export class HelperService extends BaseHelperService implements OnModuleInit {
           data: {
             id: createRecordId(),
             name: 'Admin',
-            email: 'admin@ntcapital.com.br',
-            password: await hashPassword('adminMaster@123'),
+            email: 'admin@gmail.com',
+            password: await hashPassword('myAdmin@123'),
             UserRole: {
               create: {
                 role: {
